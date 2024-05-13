@@ -1,0 +1,63 @@
+CREATE TABLE usuario (
+    PK_Usuario INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(100),
+    userType ENUM('normal', 'administrador')
+);
+
+CREATE TABLE categoria (
+    PK_Categoria INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) UNIQUE
+);
+
+INSERT INTO categoria (nombre) VALUES ('Vestimenta y accesorios');
+INSERT INTO categoria (nombre) VALUES ('Decoración y detalles');
+INSERT INTO categoria (nombre) VALUES ('Planificación y organización');
+INSERT INTO categoria (nombre) VALUES ('Regalos y recuerdos');
+INSERT INTO categoria (nombre) VALUES ('Comida y bebida');
+INSERT INTO categoria (nombre) VALUES ('Viajes y alojamiento');
+INSERT INTO categoria (nombre) VALUES ('Maquillaje');
+INSERT INTO categoria (nombre) VALUES ('Entretenimiento y actividades');
+INSERT INTO categoria (nombre) VALUES ('Artículos para la ceremonia y la recepción');
+
+CREATE TABLE producto (
+    PK_Producto INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100),
+    descripcion VARCHAR (300),
+    precio INT,
+    imagen VARCHAR(200),
+    FK_Categoria INT,
+    FOREIGN KEY (FK_Categoria) REFERENCES categoria(PK_Categoria)
+);
+
+CREATE TABLE carrito (
+    PK_Carrito INT PRIMARY KEY AUTO_INCREMENT,
+    FK_Usuario INT,
+    FOREIGN KEY (FK_Usuario) REFERENCES Usuario(PK_Usuario),
+    FK_Producto INT,
+    FOREIGN KEY (FK_Producto) REFERENCES Producto(PK_Producto),
+    cantidad INT,
+    CONSTRAINT FK_Carrito_Producto_Usuario UNIQUE (FK_Producto, FK_Usuario)
+);
+
+CREATE TABLE pedido (
+    PK_Pedido INT PRIMARY KEY AUTO_INCREMENT,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id VARCHAR (16),
+    domicilio VARCHAR(200),
+    telefono VARCHAR(10),
+    cantidad INT,
+    costo int,
+    pdf VARCHAR (100),
+    FK_Usuario INT,
+    FOREIGN KEY (FK_Usuario) REFERENCES Usuario(PK_Usuario)
+);
+
+CREATE TABLE compra (
+    PK_Compra INT PRIMARY KEY AUTO_INCREMENT,
+    FK_Producto INT,
+    FOREIGN KEY (FK_Producto) REFERENCES producto(PK_Producto),
+    FK_Pedido INT,
+    FOREIGN KEY (FK_Pedido) REFERENCES pedido(PK_Pedido)
+);

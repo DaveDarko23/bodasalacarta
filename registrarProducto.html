@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formulario de Producto</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <nav id="adminNavbar" class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Bodas a la Carta (Admin)</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item active">
+            <a
+              class="nav-link"
+              href="http://10.0.0.3/bodas/registrarProducto.html"
+              >Registrar Producto</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Pedidos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Compras</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="cerrarSesion()"
+              >Cerrar Sesión</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h2 class="mb-4">Formulario de Producto</h2>
+      <form id="registroProductoForm">
+        <div class="form-group">
+          <label for="nombre">Nombre:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="nombre"
+            name="nombre"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="descripcion">Descripción:</label>
+          <textarea
+            class="form-control"
+            id="descripcion"
+            name="descripcion"
+            rows="3"
+            required
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="precio">Precio:</label>
+          <input
+            type="number"
+            class="form-control"
+            id="precio"
+            name="precio"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="imagen">Imagen:</label>
+          <input
+            type="file"
+            class="form-control-file"
+            id="imagen"
+            name="imagen"
+            required
+            accept="image/*"
+          />
+        </div>
+        <div class="form-group">
+          <label for="categoria">Categoría:</label>
+          <select class="form-control" id="categoria" name="categoria" required>
+            <option value="">Selecciona una categoría</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </form>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      // Hacer la solicitud fetch al endpoint para obtener las categorías
+      fetch("http://10.0.0.3/bodas/phps/getCategories.php")
+        .then((response) => response.json())
+        .then((data) => {
+          // Obtener el select de categoría
+          const selectCategoria = document.getElementById("categoria");
+
+          // Iterar sobre los datos recibidos y agregar opciones al select
+          data.forEach((categoria) => {
+            const option = document.createElement("option");
+            option.value = categoria.id;
+            option.textContent = categoria.nombre;
+            selectCategoria.appendChild(option);
+          });
+        })
+        .catch((error) => {
+          console.error("Error al obtener las categorías:", error);
+        });
+
+      // Validar el formulario antes de enviarlo
+      document
+        .getElementById("registroProductoForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          // Obtener los datos del formulario
+          const formData = new FormData(this);
+
+          // Enviar los datos al servidor
+          fetch("http://10.0.0.3/bodas/phps/registrarProducto.php", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.text();
+              }
+              throw new Error("Error en la solicitud.");
+            })
+            .then((data) => {
+              if (data != "-1") {
+                alert(data);
+              }
+            })
+            .catch((error) => {
+              console.error("Error al enviar los datos:", error);
+              alert("Se produjo un error al enviar los datos al servidor.");
+            });
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Productos</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav
+      id="normalNavbar"
+      class="navbar navbar-expand-lg navbar-light bg-light"
+      style="display: none"
+    >
+      <a class="navbar-brand" href="#">Bodas a la Carta</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/carrito.html"
+              >Carrito</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/pedidos.html"
+              >Pedidos</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/compra.html"
+              >Mis compras</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="cerrarSesion()"
+              >Cerrar Sesión</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Navbar para usuario administrador -->
+    <nav
+      id="adminNavbar"
+      class="navbar navbar-expand-lg navbar-light bg-light"
+      style="display: none"
+    >
+      <a class="navbar-brand" href="#">Bodas a la Carta (Admin)</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="http://10.0.0.3/bodas/registrarProducto.html"
+              >Registrar Producto</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/pedidos.html"
+              >Pedidos</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/compra.html"
+              >Compras</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="cerrarSesion()"
+              >Cerrar Sesión</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h2 class="mb-4">Productos</h2>
+      <div class="row" id="productCards"></div>
+    </div>
+
+    <!-- Bootstrap JS y dependencias de jQuery y Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      // Función para cerrar sesión
+      function cerrarSesion() {
+        // Limpiar el localStorage
+        localStorage.clear();
+        // Redireccionar al inicio de sesión o a otra página
+        window.location.href = "http://10.0.0.3/bodas/login.html";
+      }
+
+      window.onload = function () {
+        var userType = localStorage.getItem("userType");
+        if (userType === "administrador") {
+          document.getElementById("adminNavbar").style.display = "block";
+        } else if (userType === "normal") {
+          document.getElementById("normalNavbar").style.display = "block";
+        }
+      };
+
+      // Función para cargar los productos desde el endpoint
+      function cargarProductos() {
+        // Realizar la solicitud fetch al endpoint de productos
+        fetch("http://10.0.0.3/bodas/phps/getCarritos.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            PK_Usuario: localStorage.getItem("userPK"),
+            userType: localStorage.getItem("userType"),
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const productCards = document.getElementById("productCards");
+            // Limpiar contenido existente
+            productCards.innerHTML = "";
+            // Recorrer los datos de los productos y crear tarjetas para cada uno
+            data.forEach((producto) => {
+              const card = `
+              <div class="col-md-4 mb-4">
+                <div class="card">
+                  <img src="${producto.imagen}" class="card-img-top" alt="${producto.nombre}">
+                  <div class="card-body">
+                    <h5 class="card-title">${producto.nombre}</h5>
+                    <p class="card-text">${producto.descripcion}</p>
+                    <p class="card-text">Precio: $${producto.precio}</p>
+                    <a href="${producto.pdf}" class="btn btn-primary" target="_blank">Detalle de Compra</a>
+                  </div>
+                </div>
+              </div>
+            `;
+              productCards.innerHTML += card;
+            });
+          })
+          .catch((error) =>
+            console.error("Error al cargar los productos:", error)
+          );
+      }
+
+      // Llamar a la función para cargar los productos cuando la página se cargue
+      document.addEventListener("DOMContentLoaded", cargarProductos);
+    </script>
+  </body>
+</html>

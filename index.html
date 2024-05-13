@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      /* Estilo para limitar el tamaño de las imágenes */
+      .card-img-top {
+        max-width: 20%;
+        height: auto;
+      }
+      /* Estilo para hacer uso de flexbox en las cards */
+      .card {
+        display: flex;
+        flex-direction: row;
+        max-height: 200px;
+      }
+      .card:hover {
+        background-color: aliceblue;
+        cursor: pointer;
+      }
+
+      .card-body {
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar para usuario normal -->
+    <nav
+      id="normalNavbar"
+      class="navbar navbar-expand-lg navbar-light bg-light"
+      style="display: none"
+    >
+      <a class="navbar-brand" href="#">Bodas a la Carta</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/carrito.html"
+              >Carrito</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/pedidos.html"
+              >Pedidos</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/compra.html"
+              >Mis compras</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="cerrarSesion()"
+              >Cerrar Sesión</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Navbar para usuario administrador -->
+    <nav
+      id="adminNavbar"
+      class="navbar navbar-expand-lg navbar-light bg-light"
+      style="display: none"
+    >
+      <a class="navbar-brand" href="#">Bodas a la Carta (Admin)</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="http://10.0.0.3/bodas/registrarProducto.html"
+              >Registrar Producto</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/pedidos.html"
+              >Pedidos</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/compra.html"
+              >Compras</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="cerrarSesion()"
+              >Cerrar Sesión</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Navbar para usuarios no registrados -->
+    <nav id="guestNavbar" class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Bodas a la Carta</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="login.html">Iniciar Sesión</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Secciones para productos por categoría -->
+    <div class="container mt-5">
+      <h2 class="mb-4">Productos por Categoría</h2>
+      <!-- Secciones para cada categoría -->
+      <div id="categoriaProductos">
+        <!-- Las secciones se agregarán dinámicamente aquí -->
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      // Función para cerrar sesión
+      function cerrarSesion() {
+        // Limpiar el localStorage
+        localStorage.clear();
+        // Redireccionar al inicio de sesión o a otra página
+        window.location.href = "http://10.0.0.3/bodas/login.html";
+      }
+
+      // Verificar el tipo de usuario en el localStorage y mostrar la barra de navegación correspondiente
+      window.onload = function () {
+        var userType = localStorage.getItem("userType");
+        if (userType === "administrador") {
+          document.getElementById("guestNavbar").style.display = "none";
+          document.getElementById("adminNavbar").style.display = "block";
+        } else if (userType === "normal") {
+          document.getElementById("guestNavbar").style.display = "none";
+          document.getElementById("normalNavbar").style.display = "block";
+        } else {
+          document.getElementById("guestNavbar").style.display = "block";
+        }
+
+        // Hacer la solicitud fetch al endpoint para obtener los productos
+        fetch("http://10.0.0.3/bodas/phps/getProducts.php")
+          .then((response) => response.json())
+          .then((data) => {
+            // Crear secciones para cada categoría y agregar productos correspondientes
+            var categoriaProductosDiv =
+              document.getElementById("categoriaProductos");
+            fetch("http://10.0.0.3/bodas/phps/getCategories.php")
+              .then((response) => response.json())
+              .then((cat) => {
+                console.log(cat);
+                console.log(data);
+                cat.forEach((categoria) => {
+                  var categoriaSection = document.createElement("div");
+                  categoriaSection.classList.add("mt-4");
+                  categoriaSection.innerHTML = `<h4>${categoria.nombre}</h4>`;
+                  data.forEach((product) => {
+                    if (product.nombre === categoria.nombre) {
+                      var card = document.createElement("div");
+                      card.classList.add("card", "mb-3");
+                      card.innerHTML = `
+                    <img src="${product.imagen}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">${product.product}</h5>
+                        <p class="card-text">${product.descripcion}</p>
+                        <p class="card-text">Precio: $${product.precio}</p>
+                        ${
+                          userType === "normal"
+                            ? `<button class="btn btn-primary btn-add-to-cart" data-product-id="${product.id_producto}">Agregar al carrito</button>`
+                            : ""
+                        }
+                    </div>`;
+
+                      categoriaSection.appendChild(card);
+                    }
+                  });
+                  categoriaProductosDiv.appendChild(categoriaSection);
+                });
+                // Obtener el select de categoría
+                /*const selectCategoria = document.getElementById("categoria");
+                console.log(cat);
+                // Iterar sobre los datos recibidos y agregar opciones al select
+                cat.forEach((categoria, index) => {
+                  var categoriaSection = document.createElement("div");
+                  categoriaSection.classList.add("mt-4");
+                  categoriaSection.innerHTML = `<h4>${categoria.nombre}</h4>`;
+                  console.log(data);
+                  console.log(categoria.nombre);
+                  if (data.includes((d) => d.nombre === categoria.nombre)) {
+                    data[index].forEach((producto) => {
+                      var card = document.createElement("div");
+                      card.classList.add("card", "mb-3");
+                      card.innerHTML = `
+                    <img src="${
+                      producto.imagen
+                    }" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">${producto.product}</h5>
+                        <p class="card-text">${producto.descripcion}</p>
+                        <p class="card-text">Precio: $${producto.precio}</p>
+                        ${
+                          userType === "normal"
+                            ? `<button class="btn btn-primary btn-add-to-cart" data-product-id="${producto.id_producto}">Agregar al carrito</button>`
+                            : ""
+                        }
+                    </div>`;
+
+                      categoriaSection.appendChild(card);
+                    });
+                  } else {
+                    categoriaSection.innerHTML += `<p>No hay productos en esta categoría</p>`;
+                  }
+                  categoriaProductosDiv.appendChild(categoriaSection);
+                });*/
+              })
+              .catch((error) => {
+                console.error("Error al obtener las categorías:", error);
+              });
+          })
+          .catch((error) => {
+            console.error("Error al obtener los productos:", error);
+            alert("Se produjo un error al obtener los productos del servidor.");
+          });
+
+        window.addEventListener("click", (e) => {
+          if (e.target.classList.value === "btn btn-primary btn-add-to-cart") {
+            const productId = e.target.dataset.productId;
+
+            console.log(productId);
+            console.log(localStorage.getItem("userPK"));
+
+            fetch("http://10.0.0.3/bodas/phps/insertCarrito.php", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                productId,
+                PK_Usuario: localStorage.getItem("userPK"),
+              }),
+            })
+              .then((response) => {
+                if (response.ok) {
+                  return response.json();
+                }
+                throw new Error("Error en la solicitud.");
+              })
+              .then((data) => {
+                if (data == 200) alert("Agregado al carrito");
+              })
+              .catch((error) => {
+                console.error("Error al enviar los datos:", error);
+                // Manejar errores
+              });
+          }
+        });
+      };
+    </script>
+  </body>
+</html>

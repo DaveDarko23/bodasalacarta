@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      /* Estilo para limitar el tamaño de las imágenes */
+      .card-img-top {
+        max-width: 20%;
+        height: auto;
+      }
+      /* Estilo para hacer uso de flexbox en las cards */
+      .card {
+        display: flex;
+        flex-direction: row;
+        max-height: 200px;
+      }
+      .card:hover {
+        background-color: aliceblue;
+        cursor: pointer;
+      }
+
+      .card-body {
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar para usuario normal -->
+    <nav
+      id="normalNavbar"
+      class="navbar navbar-expand-lg navbar-light bg-light"
+      style="display: none"
+    >
+      <a class="navbar-brand" href="#">Bodas a la Carta</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/carrito.html"
+              >Carrito</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="http://10.0.0.3/bodas/pedidos.html"
+              >Pedidos</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/pedidos.html"
+              >Mis compras</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="cerrarSesion()"
+              >Cerrar Sesión</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Navbar para usuario administrador -->
+    <nav
+      id="adminNavbar"
+      class="navbar navbar-expand-lg navbar-light bg-light"
+      style="display: none"
+    >
+      <a class="navbar-brand" href="#">Bodas a la Carta (Admin)</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="http://10.0.0.3/bodas/registrarProducto.html"
+              >Registrar Producto</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="http://10.0.0.3/bodas/pedidos.html"
+              >Pedidos</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/pedidos.html"
+              >Compras</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="cerrarSesion()"
+              >Cerrar Sesión</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h2 class="mb-4">Pedidos</h2>
+      <div id="pedidoCards" class="row"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      // Función para cerrar sesión
+      function cerrarSesion() {
+        // Limpiar el localStorage
+        localStorage.clear();
+        // Redireccionar al inicio de sesión o a otra página
+        window.location.href = "http://10.0.0.3/bodas/login.html";
+      }
+
+      // Verificar el tipo de usuario en el localStorage y mostrar la barra de navegación correspondiente
+      window.onload = function () {
+        var userType = localStorage.getItem("userType");
+        if (userType === "administrador") {
+          document.getElementById("adminNavbar").style.display = "block";
+        } else if (userType === "normal") {
+          document.getElementById("normalNavbar").style.display = "block";
+        }
+      };
+      // Función para cargar los pedidos desde el endpoint
+      function cargarPedidos() {
+        // Realizar la solicitud fetch al endpoint de pedidos
+        fetch("http://10.0.0.3/bodas/phps/pedidos.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            PK_Usuario: localStorage.getItem("userPK"),
+            userType: localStorage.getItem("userType"),
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const pedidoCards = document.getElementById("pedidoCards");
+            // Limpiar contenido existente
+            pedidoCards.innerHTML = "";
+            // Recorrer los datos de los pedidos y crear tarjetas para cada uno
+            data.forEach((pedido) => {
+              const card = `
+              <div class="col-md-4 mb-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Pedido #${pedido.id_pedido}</h5>
+                    <p class="card-text">Fecha: ${pedido.fecha}</p>
+                    <p class="card-text">Domicilio: ${pedido.domicilio}</p>
+                    <p class="card-text">Teléfono: ${pedido.telefono}</p>
+                    <p class="card-text">Cantidad: ${pedido.cantidad}</p>
+                    <p class="card-text">Costo: $${pedido.costo}</p>
+                    <a href="${pedido.pdf}" class="btn btn-primary btn-sm" target="_blank">Detalle de compra</a>
+                  </div>
+                </div>
+              </div>
+            `;
+              pedidoCards.innerHTML += card;
+            });
+          })
+          .catch((error) =>
+            console.error("Error al cargar los pedidos:", error)
+          );
+      }
+
+      // Llamar a la función para cargar los pedidos cuando la página se cargue
+      document.addEventListener("DOMContentLoaded", cargarPedidos);
+    </script>
+  </body>
+</html>

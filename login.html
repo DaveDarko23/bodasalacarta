@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login con Bootstrap</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      /* Estilos adicionales personalizados */
+      .login-container {
+        margin-top: 100px;
+      }
+      h1 {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container login-container">
+      <h1>Bodas a la carta</h1>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">Iniciar sesión</div>
+            <div class="card-body">
+              <form id="loginForm">
+                <div class="form-group">
+                  <label for="username">Correo:</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="Ingrese su Correo electrónico"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="password">Contraseña:</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    placeholder="Ingrese su contraseña"
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                  Iniciar sesión
+                </button>
+              </form>
+            </div>
+            <div class="card-footer">
+              ¿Aún no tienes una cuenta?
+              <a href="registro.html">Regístrate aquí</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const formData = new FormData(this);
+
+          // Enviar los datos del formulario al backend
+          fetch("http://10.0.0.3/bodas/phps/login.php", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.text())
+            .then((data) => {
+              // Validar la respuesta
+              if (data !== "-1") {
+                //alert(data);
+                const response = JSON.parse(data);
+                localStorage.setItem("userPK", response.PK_Usuario);
+                localStorage.setItem("userType", response.userType);
+                window.location.href = "http://10.0.0.3/bodas/index.html";
+              } else {
+                alert("Credenciales incorrectas");
+              }
+            })
+            .catch((error) => {
+              console.error("Error al enviar los datos:", error);
+              alert("Se produjo un error al iniciar sesión");
+            });
+        });
+    </script>
+  </body>
+</html>

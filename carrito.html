@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carrito de Compras</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <nav
+      id="normalNavbar"
+      class="navbar navbar-expand-lg navbar-light bg-light"
+    >
+      <a class="navbar-brand" href="#">Bodas a la Carta</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Carrito</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/pedidos.html">Pedidos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://10.0.0.3/bodas/compra.html">Mis compras</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="cerrarSesion()"
+              >Cerrar Sesión</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h2 class="mt-5 mb-4">Carrito de Compras</h2>
+
+      <!-- Lista de productos en el carrito -->
+      <ul class="list-group" id="productList">
+        <!-- Más elementos de la lista de productos aquí -->
+      </ul>
+
+      <!-- Total del carrito -->
+      <div class="mt-4 mb-3">
+        <h5 id="totalText">Total: $0</h5>
+      </div>
+
+      <!-- Resumen del pedido -->
+      <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Resumen del Pedido</h5>
+            <p class="card-text" id="subtotalText">Total de Productos: $0</p>
+            <p class="card-text" id="taxText">Impuestos: $0</p>
+            <p class="card-text">Envío: $5</p>
+            <h5 class="card-text" id="totalPayableText">Total a Pagar: $0</h5>
+        </div>
+      </div>
+
+      <br/>
+
+      <!-- Campo de entrada para el domicilio -->
+      <div class="form-group row">
+        <div class="col-sm-10">
+          <h3>Datos de Contacto</h3>
+          <input type="text" class="form-control" id="direccion" placeholder="Ingrese su domicilio">
+          <br/>
+          <input type="text" class="form-control" id="telefono" placeholder="Ingrese Telefono de Contacto">
+        </div>
+      </div>
+
+      <!-- Botón para proceder al pago -->
+      <div class="form-group row">
+        <div class="col-sm-10 offset-sm-2">
+          <button class="btn btn-primary mt-4" onclick="finishCarrito()">Proceder al Pago</button>
+        </div>
+      </div>
+      <br/>
+      <br/>
+      <br/>
+
+      <!-- Bootstrap JS y dependencias de jQuery y Popper.js -->
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+      <script>
+        // Función para cerrar sesión
+        function cerrarSesion() {
+            // Limpiar el localStorage
+            localStorage.clear();
+            // Redireccionar al inicio de sesión o a otra página
+            window.location.href = "http://10.0.0.3/bodas/login.html";
+        }
+
+        // Obtener la referencia al elemento <ul> donde se mostrarán los productos
+        const productList = document.getElementById("productList");
+        const totalText = document.getElementById("totalText");
+        const subtotalText = document.getElementById("subtotalText");
+        const taxText = document.getElementById("taxText");
+        const totalPayableText = document.getElementById("totalPayableText");
+
+        let total = 0;
+
+        // Hacer la solicitud fetch al endpoint para obtener los productos
+        fetch("http://10.0.0.3/bodas/phps/getCarritoList.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                PK_Usuario: localStorage.getItem("userPK"),
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // Iterar sobre los productos obtenidos de la respuesta
+                data.forEach((producto) => {
+                    total += parseInt(producto.precio) * parseInt(producto.cantidad);
+                    // Crear un nuevo elemento <li> para cada producto
+                    const listItem = document.createElement("li");
+                    listItem.classList.add(
+                        "list-group-item",
+                        "d-flex",
+                        "justify-content-between",
+                        "align-items-center"
+                    );
+                    listItem.setAttribute("id", "list-" + producto.id_producto);
+
+                    // Construir el contenido del elemento <li> utilizando los datos del producto
+                    listItem.innerHTML = `
+                    <div class="media">
+                        <img src="${producto.imagen}" class="mr-3" alt="${producto.nombre}" style="max-width: 100px;">
+                        <div class="media-body">
+                            <h3 class="mt-0">${producto.nombre}</h3>
+                            <p>Precio: $<span id="price-${producto.id_producto}">${producto.precio}</span></p>
+                            <h6 class="mt-0">${producto.categoria}</h6>
+                        </div>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="btn btn-secondary" onclick="decreaseQuantity(${producto.id_producto}, ${producto.precio})">-</button>
+                        <span class="quantity-${producto.id_producto}">${producto.cantidad}</span>
+                        <button class="btn btn-secondary" onclick="increaseQuantity(${producto.id_producto}, ${producto.precio})">+</button>
+                    </div>
+                    <div class="input-group" style="width: 180px;">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-danger" type="button" onclick="deleteProduct(${producto.id_producto})">Eliminar</button>
+                        </div>
+                    </div>
+                `;
+
+                    // Agregar el elemento <li> al elemento <ul> de la lista de productos
+                    productList.appendChild(listItem);
+                });
+
+                // Calcular subtotal, impuestos y total a pagar
+                const tax = total * 0.1; // Impuesto del 10%
+                const totalPayable = total + tax + 5; // Total a pagar incluyendo impuestos y envío
+                // Actualizar los textos en la página
+                totalText.textContent = `Total: $${total}`;
+                subtotalText.textContent = `Total de Productos: $${total}`;
+                taxText.textContent = `Impuestos: $${tax.toFixed(2)}`;
+                totalPayableText.textContent = `Total a Pagar: $${totalPayable.toFixed(2)}`;
+            })
+            .catch((error) => {
+                console.error("Error al obtener los productos:", error);
+                // Manejar errores
+            });
+
+        // Funciones para aumentar y reducir la cantidad
+        function increaseQuantity(productId, price) {
+            const quantitySpan = document.querySelector(`.quantity-${productId}`);
+            let quantity = parseInt(quantitySpan.textContent);
+            if (quantity < 10) {
+                quantity++;
+                quantitySpan.textContent = quantity;
+                updateSummary(price, 1);
+                updateQuantity("http://10.0.0.3/bodas/phps/updateCarrito.php", quantity, productId);
+            }
+        }
+
+        function decreaseQuantity(productId, price) {
+            const quantitySpan = document.querySelector(`.quantity-${productId}`);
+            let quantity = parseInt(quantitySpan.textContent);
+            if (quantity > 1) {
+                quantity--;
+                quantitySpan.textContent = quantity;
+                updateSummary(price, -1);
+                updateQuantity("http://10.0.0.3/bodas/phps/updateCarrito.php", quantity, productId);
+            }
+        }
+
+        // Función para actualizar el resumen del pedido
+        function updateSummary(price, quantityChange) {
+            total += price * quantityChange;
+            const tax = total * 0.1; // Impuesto del 10%
+            const totalPayable = total + tax + 5; // Total a pagar incluyendo impuestos y envío
+            // Actualizar los textos en la página
+            totalText.textContent = `Total: $${total}`;
+            subtotalText.textContent = `Total de Productos: $${total}`;
+            taxText.textContent = `Impuestos: $${tax.toFixed(2)}`;
+            totalPayableText.textContent = `Total a Pagar: $${totalPayable.toFixed(2)}`;
+        }
+
+        function deleteProduct(productId) {
+            const element = document.getElementById(`list-`+productId);
+            const price = parseFloat(document.getElementById(`price-${productId}`).textContent.replace('$', ''));
+            const quantity = parseInt(document.querySelector(`.quantity-${productId}`).textContent);
+            console.log(element);
+            console.log(price);
+            console.log(quantity);
+            element.parentNode.removeChild(element);
+            updateSummary(price, -quantity);
+            updateQuantity("http://10.0.0.3/bodas/phps/deleteCarrito.php", quantity, productId);
+        }
+
+        
+
+        function updateQuantity(url, quantity, PK_Producto) {
+          fetch(url, {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                      PK_Usuario: localStorage.getItem("userPK"),
+                      PK_Producto,
+                      quantity
+                  }),
+              })
+              .then((response) => {
+                  if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+              })
+              .then((data) => {
+                  // Hacer algo con los datos obtenidos
+                  console.log(data);
+              })
+              .catch((error) => {
+                  console.error('There was a problem with the fetch operation:', error);
+              });
+            }
+
+        function finishCarrito(){
+          const address = document.getElementById("direccion").value;
+          const phone = document.getElementById("telefono").value;
+          fetch("http://10.0.0.3/bodas/phps/insertarPedidos.php", {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                      PK_Usuario: localStorage.getItem("userPK"),
+                      address,
+                      phone,
+                      costo: totalText.textContent.replace("Total: $","")
+                  }),
+              })
+              .then((response) => {
+                  if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+              })
+              .then((data) => {
+                  // Hacer algo con los datos obtenidos
+                  console.log(data.pdf);
+                  //sendEmail(data.pdf);
+              })
+              .catch((error) => {
+                  console.error('There was a problem with the fetch operation:', error);
+              });
+        }
+
+        function sendEmail(pdf){
+          fetch("http://10.0.0.3/bodas/phps/sendEmail.php", {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    PK_Usuario: localStorage.getItem("userPK"),
+                    pdf
+                  }),
+              })
+              .then((response) => {
+                  if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+              })
+              .then((data) => {
+                  console.log(data);
+              })
+              .catch((error) => {
+                  console.error('There was a problem with the fetch operation:', error);
+              });
+        }
+      </script>
+
+  </body>
+</html>
