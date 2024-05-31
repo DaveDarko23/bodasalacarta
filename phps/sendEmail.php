@@ -19,34 +19,36 @@ if ($result->num_rows > 0) {
     // Cerrar conexión
     $conn->close();
 
-    require("C:/xampp/vendor/phpmailer/phpmailer/src/PHPMailer.php");
-    require("C:/xampp/vendor/phpmailer/phpmailer/src/SMTP.php");
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
+    require '../vendor/autoload.php';
 
-    $mail = new PHPMailer\PHPMailer\PHPMailer();
-    $mail->CharSet = 'utf-8';
-    $mail->Host = "smtp.googlemail.com";
-    $mail->From = "a22110098@ceti.mx"; // Correo Enviador
-    $mail->IsSMTP();
-    $mail->SMTPAuth = true;
-    $mail->Username = "a22110098@ceti.mx"; // Correo Enviador
-    $mail->Password = ""; // Contraseña
-    $mail->SMTPSecure = "tls";
-    $mail->Port = 587;
-    $mail->AddAddress($email);
-    $mail->SMTPDebug = 0;   //Muestra las trazas del mail, 0 para ocultarla
-    $mail->isHTML(true);                                  // Set email format to HTML
-    $mail->Subject = 'Gracias por tu compra!';
-    $mail->Body = 'Muchas gracias por tu compra! <b> Te mandamos el resumen de tu compra</b>';
-    $mail->AltBody = 'Muchas gracias por tu compra! Te mandamos el resumen de tu compra';
+    // Content for the email body
+    $emailContent = '<h1>Bienvenido a Nuestro Sitio Web</h1><p>Gracias por su compra.</p>';
 
-    $inMailFileName = "Compra-ComercioGlobal.pdf";
-    $filePath = "../pdf/" . $id . ".pdf";
-    $mail->AddAttachment($filePath, $inMailFileName);
+    // Use PHPMailer to send the email
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'a22110055@ceti.mx'; // Replace with your Gmail email address
+        $mail->Password = ''; // Replace with your Gmail password
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
 
-    if (!$mail->send()) {
-        echo "Error al enviar el correo: " . $mail->ErrorInfo;
-    } else {
-        echo "Correo enviado correctamente";
+        $mail->setFrom('a22110098@ceti.com', 'Bodas a la Carta'); // Replace with your Gmail email address and your name
+        $mail->addAddress($email); // Use the actual field names
+
+        $mail->isHTML(true);
+        $mail->Subject = 'Welcome to Our Website';
+        $mail->Body = $emailContent;
+        $mail->addAttachment('../pdf/' . $id . '.pdf');
+
+        $mail->send();
+        echo "Email sent successfully!";
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }
 } else {
     echo "Usuario no encontrado";

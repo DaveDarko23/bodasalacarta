@@ -40,7 +40,7 @@ if ($resultado->num_rows > 0) {
     $id_pedido = substr(md5(uniqid()), 0, 16);
 
     generateContentPdf($productos, $costo, $address, $phone, $id_pedido);
-    $pdf = "http://10.0.0.3/bodas/pdf/" . $id_pedido . ".pdf";
+    $pdf = "http://10.0.0.3/pdf/" . $id_pedido . ".pdf";
     $sql_insert_pedido = "INSERT INTO pedido (id, domicilio, telefono, cantidad, costo, pdf, FK_Usuario) 
     VALUES ('$id_pedido', '$address', '$phone'," . count($productos) . ", $costo, '$pdf', $PK_Usuario)";
 

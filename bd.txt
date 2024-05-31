@@ -8,7 +8,7 @@ CREATE TABLE usuario (
 
 CREATE TABLE categoria (
     PK_Categoria INT PRIMARY KEY AUTO_INCREMENT,
-    nombre VARCHAR(100) UNIQUE
+    nombre VARCHAR(100) UNIQUE  CHARACTER SET utf8
 );
 
 INSERT INTO categoria (nombre) VALUES ('Vestimenta y accesorios');
@@ -23,8 +23,8 @@ INSERT INTO categoria (nombre) VALUES ('Artículos para la ceremonia y la recepc
 
 CREATE TABLE producto (
     PK_Producto INT PRIMARY KEY AUTO_INCREMENT,
-    nombre VARCHAR(100),
-    descripcion VARCHAR (300),
+    nombre VARCHAR(100)  CHARACTER SET utf8,
+    descripcion VARCHAR (300)  CHARACTER SET utf8,
     precio INT,
     imagen VARCHAR(200),
     FK_Categoria INT,

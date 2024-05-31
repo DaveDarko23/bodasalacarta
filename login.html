@@ -67,6 +67,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+      const url = window.location.href; // Obtiene la URL completa
+      const urlObject = new URL(url); // Crea un objeto URL
+
+      const host = urlObject.hostname;
+
       document
         .getElementById("loginForm")
         .addEventListener("submit", function (event) {
@@ -75,7 +80,7 @@
           const formData = new FormData(this);
 
           // Enviar los datos del formulario al backend
-          fetch("http://10.0.0.3/bodas/phps/login.php", {
+          fetch("http://" + host + "/phps/login.php", {
             method: "POST",
             body: formData,
           })
@@ -87,7 +92,7 @@
                 const response = JSON.parse(data);
                 localStorage.setItem("userPK", response.PK_Usuario);
                 localStorage.setItem("userType", response.userType);
-                window.location.href = "http://10.0.0.3/bodas/index.html";
+                window.location.href = "http://" + host + "/index.html";
               } else {
                 alert("Credenciales incorrectas");
               }

@@ -8,12 +8,12 @@ $precio = $_POST['precio'];
 $categoria = $_POST['categoria'];
 
 // Obtener la cantidad de imágenes en la carpeta de carga
-$files = glob("uploads/*");
+$files = glob("images/*");
 $num_files = count($files);
 
 // Generar un nombre único para la imagen
 $new_filename = "imagen_" . ($num_files + 1) . "." . pathinfo($_FILES["imagen"]["name"], PATHINFO_EXTENSION);
-$target_file = "http://10.0.0.3/bodas/phps/images/" . $new_filename;
+$target_file = "http://10.0.0.3/phps/images/" . $new_filename;
 move_uploaded_file($_FILES["imagen"]["tmp_name"], "images/" . $new_filename);
 
 // Preparar la consulta SQL para insertar el producto

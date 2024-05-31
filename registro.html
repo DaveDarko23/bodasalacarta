@@ -74,10 +74,15 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+      const url = window.location.href; // Obtiene la URL completa
+      const urlObject = new URL(url); // Crea un objeto URL
+
+      const host = urlObject.hostname;
+
       function enviarDatos(formData) {
         // Aquí puedes hacer la petición fetch para enviar los datos a tu backend
         // Reemplaza 'URL_DEL_BACKEND' con la URL de tu servidor
-        fetch("http://10.0.0.3/bodas/phps/registro.php", {
+        fetch("http://" + host + "/phps/registro.php", {
           method: "POST",
           body: formData,
         })
@@ -87,7 +92,7 @@
             if (data !== "-1") {
               localStorage.setItem("userType", "normal");
               localStorage.setItem("userPK", data);
-              window.location.href = "http://10.0.0.3/bodas/index.html";
+              window.location.href = "http://" + host + "/index.html";
             } else {
               alert("Error en el registro");
             }

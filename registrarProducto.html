@@ -12,7 +12,7 @@
   </head>
   <body>
     <nav id="adminNavbar" class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">Bodas a la Carta (Admin)</a>
+      <a class="navbar-brand" href="index.html">Bodas a la Carta (Admin)</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -27,22 +27,20 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="http://10.0.0.3/bodas"
+            <a class="nav-link" href="index.html"
               >Home <span class="sr-only">(current)</span></a
             >
           </li>
           <li class="nav-item active">
-            <a
-              class="nav-link"
-              href="http://10.0.0.3/bodas/registrarProducto.html"
+            <a class="nav-link" href="registrarProducto.html"
               >Registrar Producto</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Pedidos</a>
+            <a class="nav-link" href="pedidos.html">Pedidos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Compras</a>
+            <a class="nav-link" href="compra.html">Compras</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" onclick="cerrarSesion()"
@@ -113,8 +111,20 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+      const url = window.location.href; // Obtiene la URL completa
+      const urlObject = new URL(url); // Crea un objeto URL
+
+      const host = urlObject.hostname;
+
+      function cerrarSesion() {
+        // Limpiar el localStorage
+        localStorage.clear();
+        // Redireccionar al inicio de sesión o a otra página
+        window.location.href = "http://" + host + "/login.html";
+      }
+
       // Hacer la solicitud fetch al endpoint para obtener las categorías
-      fetch("http://10.0.0.3/bodas/phps/getCategories.php")
+      fetch("http://" + host + "/phps/getCategories.php")
         .then((response) => response.json())
         .then((data) => {
           // Obtener el select de categoría
@@ -142,7 +152,7 @@
           const formData = new FormData(this);
 
           // Enviar los datos al servidor
-          fetch("http://10.0.0.3/bodas/phps/registrarProducto.php", {
+          fetch("http://" + host + "/phps/registrarProducto.php", {
             method: "POST",
             body: formData,
           })
@@ -155,6 +165,15 @@
             .then((data) => {
               if (data != "-1") {
                 alert(data);
+                document.getElementById("nombre").value = "";
+                document.getElementById("descripcion").value = "";
+                document.getElementById("precio").value = "";
+
+                // Resetear el campo de archivo
+                document.getElementById("imagen").value = "";
+
+                // Volver a la opción por defecto en el select
+                document.getElementById("categoria").selectedIndex = 0;
               }
             })
             .catch((error) => {

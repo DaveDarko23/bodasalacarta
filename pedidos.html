@@ -37,7 +37,7 @@
       class="navbar navbar-expand-lg navbar-light bg-light"
       style="display: none"
     >
-      <a class="navbar-brand" href="#">Bodas a la Carta</a>
+      <a class="navbar-brand" href="index.html">Bodas a la Carta</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -52,24 +52,18 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="http://10.0.0.3/bodas"
+            <a class="nav-link" href="index.html"
               >Home <span class="sr-only">(current)</span></a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="http://10.0.0.3/bodas/carrito.html"
-              >Carrito</a
-            >
+            <a class="nav-link" href="carrito.html">Carrito</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="http://10.0.0.3/bodas/pedidos.html"
-              >Pedidos</a
-            >
+            <a class="nav-link active" href="pedidos.html">Pedidos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="http://10.0.0.3/bodas/pedidos.html"
-              >Mis compras</a
-            >
+            <a class="nav-link" href="compra.html">Mis compras</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" onclick="cerrarSesion()"
@@ -86,7 +80,7 @@
       class="navbar navbar-expand-lg navbar-light bg-light"
       style="display: none"
     >
-      <a class="navbar-brand" href="#">Bodas a la Carta (Admin)</a>
+      <a class="navbar-brand" href="index.html">Bodas a la Carta (Admin)</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -101,26 +95,20 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="#"
+            <a class="nav-link" href="index.html"
               >Home <span class="sr-only">(current)</span></a
             >
           </li>
           <li class="nav-item">
-            <a
-              class="nav-link"
-              href="http://10.0.0.3/bodas/registrarProducto.html"
+            <a class="nav-link" href="registrarProducto.html"
               >Registrar Producto</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="http://10.0.0.3/bodas/pedidos.html"
-              >Pedidos</a
-            >
+            <a class="nav-link active" href="pedidos.html">Pedidos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="http://10.0.0.3/bodas/pedidos.html"
-              >Compras</a
-            >
+            <a class="nav-link" href="compra.html">Compras</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" onclick="cerrarSesion()"
@@ -141,12 +129,17 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+      const url = window.location.href; // Obtiene la URL completa
+      const urlObject = new URL(url); // Crea un objeto URL
+
+      const host = urlObject.hostname;
+
       // Función para cerrar sesión
       function cerrarSesion() {
         // Limpiar el localStorage
         localStorage.clear();
         // Redireccionar al inicio de sesión o a otra página
-        window.location.href = "http://10.0.0.3/bodas/login.html";
+        window.location.href = "http://" + host + "/login.html";
       }
 
       // Verificar el tipo de usuario en el localStorage y mostrar la barra de navegación correspondiente
@@ -161,7 +154,7 @@
       // Función para cargar los pedidos desde el endpoint
       function cargarPedidos() {
         // Realizar la solicitud fetch al endpoint de pedidos
-        fetch("http://10.0.0.3/bodas/phps/pedidos.php", {
+        fetch("http://" + host + "/phps/pedidos.php", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

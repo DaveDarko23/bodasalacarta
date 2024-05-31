@@ -15,7 +15,7 @@
       id="normalNavbar"
       class="navbar navbar-expand-lg navbar-light bg-light"
     >
-      <a class="navbar-brand" href="#">Bodas a la Carta</a>
+      <a class="navbar-brand" href="index.html">Bodas a la Carta</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -30,16 +30,16 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="http://10.0.0.3/bodas">Home</a>
+            <a class="nav-link" href="index.html">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="#">Carrito</a>
+            <a class="nav-link active" href="carrito.html">Carrito</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="http://10.0.0.3/bodas/pedidos.html">Pedidos</a>
+            <a class="nav-link" href="pedidos.html">Pedidos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="http://10.0.0.3/bodas/compra.html">Mis compras</a>
+            <a class="nav-link" href="compra.html">Mis compras</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" onclick="cerrarSesion()"
@@ -101,12 +101,17 @@
       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
       <script>
+        const url = window.location.href; // Obtiene la URL completa
+        const urlObject = new URL(url); // Crea un objeto URL
+
+        const host = urlObject.hostname;
+
         // Función para cerrar sesión
         function cerrarSesion() {
             // Limpiar el localStorage
             localStorage.clear();
             // Redireccionar al inicio de sesión o a otra página
-            window.location.href = "http://10.0.0.3/bodas/login.html";
+            window.location.href = "http://" + host + "/login.html";
         }
 
         // Obtener la referencia al elemento <ul> donde se mostrarán los productos
@@ -119,7 +124,7 @@
         let total = 0;
 
         // Hacer la solicitud fetch al endpoint para obtener los productos
-        fetch("http://10.0.0.3/bodas/phps/getCarritoList.php", {
+        fetch("http://" + host + "/phps/getCarritoList.php", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -191,7 +196,7 @@
                 quantity++;
                 quantitySpan.textContent = quantity;
                 updateSummary(price, 1);
-                updateQuantity("http://10.0.0.3/bodas/phps/updateCarrito.php", quantity, productId);
+                updateQuantity("http://" + host + "/phps/updateCarrito.php", quantity, productId);
             }
         }
 
@@ -202,7 +207,7 @@
                 quantity--;
                 quantitySpan.textContent = quantity;
                 updateSummary(price, -1);
-                updateQuantity("http://10.0.0.3/bodas/phps/updateCarrito.php", quantity, productId);
+                updateQuantity("http://" + host + "/phps/updateCarrito.php", quantity, productId);
             }
         }
 
@@ -227,7 +232,7 @@
             console.log(quantity);
             element.parentNode.removeChild(element);
             updateSummary(price, -quantity);
-            updateQuantity("http://10.0.0.3/bodas/phps/deleteCarrito.php", quantity, productId);
+            updateQuantity("http://" + host + "/phps/deleteCarrito.php", quantity, productId);
         }
 
         
@@ -262,7 +267,7 @@
         function finishCarrito(){
           const address = document.getElementById("direccion").value;
           const phone = document.getElementById("telefono").value;
-          fetch("http://10.0.0.3/bodas/phps/insertarPedidos.php", {
+          fetch("http://" + host + "/phps/insertarPedidos.php", {
                   method: "POST",
                   headers: {
                       "Content-Type": "application/json",
@@ -291,7 +296,7 @@
         }
 
         function sendEmail(pdf){
-          fetch("http://10.0.0.3/bodas/phps/sendEmail.php", {
+          fetch("http://" + host + "/phps/sendEmail.php", {
                   method: "POST",
                   headers: {
                       "Content-Type": "application/json",
